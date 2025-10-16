@@ -1,81 +1,125 @@
 package com.dev.pruebaandroid;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.OpenableColumns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 public class CorreoActivity extends AppCompatActivity {
 
-    Button btnenviar;
-    EditText edtcuerpomail, emailreceptor, edtasunto;
-    ImageView imagen1;
-    private static final int PICK_FILE_REQUEST = 1;
-    private Uri archivoUri = null;
+    private static final int PICK_FILE_REQUEST_CODE = 100;
+    private Uri attachmentUri = null;
+
+    private EditText recipientEditText;
+    private EditText subjectEditText;
+    private EditText messageEditText;
+    private TextView attachedFileTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_correo);
 
+        Toolbar toolbar = findViewById(R.id.toolbar_correo);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        toolbar.setNavigationOnClickListener(v -> onBackPressed());
 
-        btnenviar = findViewById(R.id.btnenviar);
-        edtasunto = findViewById(R.id.edtasunto);
-        edtcuerpomail = findViewById(R.id.edtcuerpomail);
-        emailreceptor = findViewById(R.id.emailreceptor);
-        imagen1 = findViewById(R.id.imagen1);
+        recipientEditText = findViewById(R.id.recipient_edittext);
+        subjectEditText = findViewById(R.id.subject_edittext);
+        messageEditText = findViewById(R.id.message_edittext);
+        attachedFileTextView = findViewById(R.id.attached_file_textview);
+        Button attachButton = findViewById(R.id.attach_button);
+        Button sendButton = findViewById(R.id.send_button);
 
-        //cuando se hace clic en la imagen, abrir el selector de archivos
-        imagen1.setOnClickListener(v -> abrirSelectorDeArchivos());
+        attachButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openFilePicker();
+            }
+        });
+
+        sendButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendEmail();
+            }
+        });
     }
 
-    private void abrirSelectorDeArchivos() {
+    private void openFilePicker() {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.setType("*/*"); // permite cualquier tipo de archivo
-        startActivityForResult(intent, PICK_FILE_REQUEST);
+        intent.setType("*/*");
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        startActivityForResult(Intent.createChooser(intent, "Seleccionar archivo"), PICK_FILE_REQUEST_CODE);
     }
 
-    // Cuando el usuario elige un archivo
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == PICK_FILE_REQUEST && resultCode == RESULT_OK && data != null) {
-            archivoUri = data.getData(); // guardamos la ruta del archivo seleccionado
+        if (requestCode == PICK_FILE_REQUEST_CODE && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            attachmentUri = data.getData();
+            String fileName = getFileName(attachmentUri);
+            attachedFileTextView.setText("Archivo adjunto: " + fileName);
+            attachedFileTextView.setVisibility(View.VISIBLE);
+            Toast.makeText(this, "Archivo adjunto: " + fileName, Toast.LENGTH_SHORT).show();
+        } else {
+            attachmentUri = null;
+            attachedFileTextView.setVisibility(View.GONE);
         }
     }
 
+    private String getFileName(Uri uri) {
+        String result = null;
+        if (uri.getScheme().equals("content")) {
+            try (Cursor cursor = getContentResolver().query(uri, null, null, null, null)) {
+                if (cursor != null && cursor.moveToFirst()) {
+                    int nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                    if (nameIndex != -1) {
+                        result = cursor.getString(nameIndex);
+                    }
+                }
+            }
+        }
+        if (result == null) {
+            result = uri.getPath();
+            int cut = result.lastIndexOf('/');
+            if (cut != -1) {
+                result = result.substring(cut + 1);
+            }
+        }
+        return result;
+    }
 
-    public void FormularioMail(View view) {
-        String receptor = emailreceptor.getText().toString().trim();
-        String asunto = edtasunto.getText().toString().trim();
-        String cuerpoMail = edtcuerpomail.getText().toString().trim();
+    private void sendEmail() {
+        String recipient = recipientEditText.getText().toString();
+        String subject = subjectEditText.getText().toString();
+        String message = messageEditText.getText().toString();
 
-        if (receptor.isEmpty() || asunto.isEmpty() || cuerpoMail.isEmpty()) {
-            if (receptor.isEmpty()) emailreceptor.setError("Ingrese el email del destinatario");
-            if (asunto.isEmpty()) edtasunto.setError("Ingrese el asunto");
-            if (cuerpoMail.isEmpty()) edtcuerpomail.setError("Ingrese el mensaje");
-            return;
+        Intent emailIntent = new Intent(Intent.ACTION_SEND);
+        emailIntent.setType("message/rfc822"); // For email apps
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{recipient});
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
+        emailIntent.putExtra(Intent.EXTRA_TEXT, message);
+
+        if (attachmentUri != null) {
+            emailIntent.putExtra(Intent.EXTRA_STREAM, attachmentUri);
+            emailIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         }
 
-        // Crear el Intent para enviar el correo
-        Intent intent = new Intent(Intent.ACTION_SEND);
-        intent.setType("message/rfc822");
-        intent.putExtra(Intent.EXTRA_EMAIL, new String[]{receptor});
-        intent.putExtra(Intent.EXTRA_SUBJECT, asunto);
-        intent.putExtra(Intent.EXTRA_TEXT, cuerpoMail);
-
-
-        if (archivoUri != null) {
-            intent.putExtra(Intent.EXTRA_STREAM, archivoUri);
+        try {
+            startActivity(Intent.createChooser(emailIntent, "Enviar correo usando..."));
+        } catch (android.content.ActivityNotFoundException ex) {
+            Toast.makeText(CorreoActivity.this, "No hay clientes de correo instalados.", Toast.LENGTH_SHORT).show();
         }
-
-        startActivity(Intent.createChooser(intent, "Elige un cliente de correo"));
     }
 }

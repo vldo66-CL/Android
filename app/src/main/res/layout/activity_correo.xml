@@ -1,116 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#FAFAFA"
-    tools:context=".CorreoActivity">
+    android:layout_height="match_parent">
+    android:padding="16dp">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar_correo"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        app:title="Mandar Correo"
+        app:navigationIcon="?attr/homeAsUpIndicator" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="20dp"
-        android:gravity="center_horizontal">
-
-        <!-- Título principal -->
-        <TextView
-            android:id="@+id/tvTitulo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Enviar Correo"
-            android:textColor="#2E7D32"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="20dp" />
-
-        <!-- Campo de correo destino -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Para:"
-            android:textColor="#424242"
-            android:textSize="15sp"
-            android:layout_marginBottom="4dp" />
+        android:padding="16dp">
 
         <EditText
-            android:id="@+id/emailreceptor"
+            android:id="@+id/recipient_edittext"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/rounded_edittext"
-            android:hint="Ingrese email destino"
-            android:inputType="textEmailAddress"
-            android:padding="12dp"
-            android:textSize="15sp"
-            android:drawablePadding="10dp" />
-
-        <!-- Campo de asunto -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Nombre / Asunto:"
-            android:textColor="#424242"
-            android:textSize="15sp"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="4dp" />
+            android:hint="Para:" />
 
         <EditText
-            android:id="@+id/edtasunto"
+            android:id="@+id/subject_edittext"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Ingrese nombre o asunto del correo"
-            android:inputType="textPersonName"
-            android:padding="12dp"
-            android:textSize="15sp"
-            android:drawablePadding="10dp" />
-
-        <!-- Campo de mensaje -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Mensaje:"
-            android:textColor="#424242"
-            android:textSize="15sp"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="4dp" />
+            android:layout_marginTop="8dp"
+            android:hint="Asunto:" />
 
         <EditText
-            android:id="@+id/edtcuerpomail"
+            android:id="@+id/message_edittext"
             android:layout_width="match_parent"
-            android:layout_height="180dp"
-            android:background="@drawable/rounded_edittext"
-            android:gravity="start|top"
-            android:hint="Escriba su mensaje aquí..."
-            android:inputType="textMultiLine"
-            android:padding="12dp"
-            android:textSize="15sp"
-            android:scrollbars="vertical" />
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginTop="8dp"
+            android:gravity="top"
+            android:hint="Mensaje:" />
 
-        <!-- Botón Enviar -->
-
-        <ImageView
-            android:id="@+id/imagen1"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_gravity="center"
-            android:layout_marginRight="160dp"
-            android:clickable="true"
-            android:contentDescription="@string/adjuntar_archivo"
-            android:focusable="true"
-            android:src="@drawable/file" />
-
-        <Button
-            android:id="@+id/btnenviar"
+        <TextView
+            android:id="@+id/attached_file_textview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:backgroundTint="#43A047"
-            android:text="Enviar"
-            android:textColor="#FFFFFF"
-            android:textStyle="bold"
-            android:padding="12dp"
-            android:onClick="FormularioMail" />
+            android:layout_marginTop="8dp"
+            android:visibility="gone"
+            android:textStyle="italic"
+            android:text="Archivo adjunto: "/>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="end">
+
+            <Button
+                android:id="@+id/attach_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:text="Adjuntar Archivo" />
+
+            <Button
+                android:id="@+id/send_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Enviar" />
+        </LinearLayout>
     </LinearLayout>
-</ScrollView>
+
+</LinearLayout>
