@@ -57,19 +57,42 @@
             android:orientation="horizontal"
             android:gravity="end">
 
+<<<<<<< HEAD
             <Button
                 android:id="@+id/attach_button"
                 android:layout_width="wrap_content"
+=======
+            <ImageView
+                android:id="@+id/camaraIMG"
+                android:layout_width="38dp"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="3dp"
+                android:src="@drawable/camara" />
+
+            <Button
+                android:id="@+id/attach_button"
+                android:layout_width="159dp"
+>>>>>>> 5753e1c (Primer commit)
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
                 android:text="Adjuntar Archivo" />
 
             <Button
                 android:id="@+id/send_button"
+<<<<<<< HEAD
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Enviar" />
         </LinearLayout>
+=======
+                android:layout_width="135dp"
+                android:layout_height="wrap_content"
+                android:text="Enviar" />
+
+
+        </LinearLayout>
+
+>>>>>>> 5753e1c (Primer commit)
     </LinearLayout>
 
 </LinearLayout>

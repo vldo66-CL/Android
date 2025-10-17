@@ -4,15 +4,20 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.OpenableColumns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.FileProvider;
+
+import java.io.File;
 
 public class CorreoActivity extends AppCompatActivity {
 
@@ -24,6 +29,10 @@ public class CorreoActivity extends AppCompatActivity {
     private EditText messageEditText;
     private TextView attachedFileTextView;
 
+
+    private static final int CAMERA_REQUEST_CODE = 200;
+    private Uri photoUri = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,12 +43,21 @@ public class CorreoActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         toolbar.setNavigationOnClickListener(v -> onBackPressed());
 
+
         recipientEditText = findViewById(R.id.recipient_edittext);
         subjectEditText = findViewById(R.id.subject_edittext);
         messageEditText = findViewById(R.id.message_edittext);
         attachedFileTextView = findViewById(R.id.attached_file_textview);
         Button attachButton = findViewById(R.id.attach_button);
         Button sendButton = findViewById(R.id.send_button);
+        ImageView camaraIMG = findViewById(R.id.camaraIMG);
+
+        camaraIMG.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openCamera();
+            }
+        });
 
         attachButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -54,6 +72,33 @@ public class CorreoActivity extends AppCompatActivity {
                 sendEmail();
             }
         });
+    }
+
+    private void openCamera() {
+        Intent takePictureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            File photoFile = null;
+            try {
+                photoFile = File.createTempFile(
+                        "foto_",
+                        ".jpg",
+                        getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+                );
+            } catch (Exception ex) {
+                Toast.makeText(this, "Error al crear archivo de imagen", Toast.LENGTH_SHORT).show();
+            }
+
+            if (photoFile != null) {
+                photoUri = FileProvider.getUriForFile(
+                        this,
+                        getPackageName() + ".provider",
+                        photoFile
+                );
+                takePictureIntent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, photoUri);
+                startActivityForResult(takePictureIntent, CAMERA_REQUEST_CODE);
+            }
+        }
     }
 
     private void openFilePicker() {
@@ -72,10 +117,18 @@ public class CorreoActivity extends AppCompatActivity {
             attachedFileTextView.setText("Archivo adjunto: " + fileName);
             attachedFileTextView.setVisibility(View.VISIBLE);
             Toast.makeText(this, "Archivo adjunto: " + fileName, Toast.LENGTH_SHORT).show();
-        } else {
+        }
+        else {
             attachmentUri = null;
             attachedFileTextView.setVisibility(View.GONE);
         }
+        if (requestCode == CAMERA_REQUEST_CODE && resultCode == RESULT_OK) {
+            attachmentUri = photoUri;
+            attachedFileTextView.setText("Foto adjunta: " + getFileName(photoUri));
+            attachedFileTextView.setVisibility(View.VISIBLE);
+            Toast.makeText(this, "Foto capturada y lista para enviar", Toast.LENGTH_SHORT).show();
+        }
+
     }
 
     private String getFileName(Uri uri) {
@@ -99,6 +152,7 @@ public class CorreoActivity extends AppCompatActivity {
         }
         return result;
     }
+
 
     private void sendEmail() {
         String recipient = recipientEditText.getText().toString();

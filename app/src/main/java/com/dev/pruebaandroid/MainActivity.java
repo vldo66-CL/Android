@@ -1,6 +1,10 @@
 package com.dev.pruebaandroid;
 
 import android.content.Intent;
+<<<<<<< HEAD
+=======
+import android.net.Uri;
+>>>>>>> 5753e1c (Primer commit)
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -41,5 +45,44 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+<<<<<<< HEAD
+=======
+
+        Button btnUbicacion = findViewById(R.id.btnUbicacion);
+        btnUbicacion.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String geoUri = "geo:33.4493142,-70.6627046,21z=-33.4493142,-70.6627046(Santiago de Chile)33.4493142,-70.6627046,21z=-33.4493142,-70.6627046(Santiago de Chile)";
+                Uri gmmIntentUri = Uri.parse(geoUri);
+
+                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                mapIntent.setPackage("com.google.android.apps.maps");
+
+                //hacemos un if para ver si tenemos la aplicacion google maps instalada
+
+                if (mapIntent.resolveActivity(getPackageManager())!= null){
+                    startActivity(mapIntent);
+                }else{
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW,
+                            Uri.parse("https://www.google.com/maps?q=-33.4493142,-70.6627046"));
+                    startActivity(browserIntent);
+                }
+            }
+        });
+
+        Button btnWeb = findViewById(R.id.btnWeb);
+        btnWeb.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String url = "https://www.santotomas.cl";
+
+                //Intent para abrir la web
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse(url));
+
+                startActivity(intent);
+            }
+        });
+>>>>>>> 5753e1c (Primer commit)
     }
 }
