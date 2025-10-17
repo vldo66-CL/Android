@@ -1,0 +1,157 @@
+{
+  "title": "PruebaAndroid",
+  "slides": [
+    {
+      "title": "PruebaAndroid",
+      "subtitle": "Aplicación de Demostración para Desarrollo Móvil en Android",
+      "bullets": [
+        "Presentado por: [Tu Nombre]",
+        "Fecha: [Fecha Actual]",
+        "Versión: 1.0",
+        "Objetivo: Demostrar Intents explícitos/implícitos, navegación y UX en Android."
+      ]
+    },
+    {
+      "title": "Introducción y Características",
+      "bullets": [
+        {
+          "content": "Descripción",
+          "items": [
+            "App de prueba para aprender Android, con navegación, email, cámara y mapas."
+          ]
+        },
+        {
+          "content": "Características Principales",
+          "items": [
+            "Navegación entre pantallas (Main, Correo, Ajustes, GPS).",
+            "Composición de emails con adjuntos (archivos o fotos).",
+            "Ubicación GPS (abre Maps en Santiago de Chile).",
+            "Navegación web (Santo Tomás)."
+          ]
+        },
+        {
+          "content": "Permisos y Requisitos",
+          "items": [
+            "Permisos: Cámara y almacenamiento externo.",
+            "Requisitos: Android API 31+, Java 11."
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Arquitectura y Tecnologías",
+      "layout": "two_column",
+      "left_column": {
+        "title": "Estructura del Proyecto",
+        "bullets": [
+          "MainActivity: Navegación principal.",
+          "CorreoActivity: Email con adjuntos.",
+          "AjustesActivity: Configuraciones básicas.",
+          "GPSActivity: Manejo de ubicación."
+        ]
+      },
+      "right_column": {
+        "title": "Tecnologías",
+        "bullets": [
+          "Lenguaje: Java.",
+          "Framework: Android SDK.",
+          "Dependencias: AppCompat, Material Design, ConstraintLayout, FileProvider.",
+          "Herramientas: Android Studio, Gradle."
+        ]
+      }
+    },
+    {
+      "title": "Intents - Explícitos e Implícitos",
+      "layout": "two_column",
+      "left_column": {
+        "title": "Explícitos (Navegación Interna)",
+        "bullets": [
+          "Uso: Navegación directa entre las Activities de la app.",
+          "Ejemplo: Main → Ajustes, Correo, GPS.",
+          "Diagrama: MainActivity es el punto central con navegación directa a las otras pantallas."
+        ]
+      },
+      "right_column": {
+        "title": "Implícitos (Interacción Externa)",
+        "bullets": [
+          "Uso: Iniciar acciones en otras aplicaciones.",
+          "Ejemplos: Abrir la cámara, selector de archivos, cliente de email, mapas o navegador web.",
+          "Flujo 1: Captura de foto → Adjuntar a email.",
+          "Flujo 2: Obtener ubicación → Abrir en Google Maps."
+        ]
+      }
+    },
+    {
+      "title": "Código Clave",
+      "bullets": [
+        {
+          "content": "Intent Explícito (Navegar a CorreoActivity)",
+          "code": "Intent intent = new Intent(MainActivity.this, CorreoActivity.class);\nstartActivity(intent);"
+        },
+        {
+          "content": "Intent Implícito (Abrir la cámara)",
+          "code": "Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);\nstartActivityForResult(takePictureIntent, CAMERA_REQUEST_CODE);"
+        },
+        {
+          "content": "Manejo de Resultado (Obtener la foto)",
+          "code": "@Override \nprotected void onActivityResult(int requestCode, int resultCode, Intent data) {\n    if (requestCode == CAMERA_REQUEST_CODE && resultCode == RESULT_OK) {\n        attachmentUri = photoUri; // Guardar URI para adjuntar\n    }\n}"
+        }
+      ]
+    },
+    {
+      "title": "Instalación, Uso y Demo",
+      "layout": "two_column",
+      "left_column": {
+        "title": "Instalación",
+        "bullets": [
+          "Clonar repositorio: git clone https://github.com/vldo66-CL/Android.git",
+          "Abrir el proyecto en Android Studio.",
+          "Sincronizar dependencias de Gradle.",
+          "Ejecutar en un emulador o dispositivo físico."
+        ]
+      },
+      "right_column": {
+        "title": "Demo de Uso",
+        "bullets": [
+          "Pantalla Principal: Acceder a las funciones con los botones.",
+          "Correo: Rellenar campos, adjuntar un archivo o tomar una foto y enviar.",
+          "Ubicación/Web: Se abren aplicaciones externas (Maps/Navegador)."
+        ]
+      }
+    },
+    {
+      "title": "Lecciones, Mejoras y Conclusión",
+      "bullets": [
+        {
+          "content": "Lecciones Aprendidas",
+          "items": [
+            "Retos: Manejo de permisos en tiempo de ejecución, gestión de URIs con FileProvider y asegurar la compatibilidad entre versiones de Android.",
+            "Validaciones: Importancia de verificar si hay apps que puedan manejar un Intent implícito.",
+            "UX: Uso de Toasts y Toolbars para una navegación clara y buen feedback al usuario."
+          ]
+        },
+        {
+          "content": "Mejoras Sugeridas",
+          "items": [
+            "Validación de entradas (ej. formato de email).",
+            "Implementar permisos dinámicos en runtime.",
+            "Añadir más Intents (ej. compartir en redes sociales).",
+            "Integrar una base de datos o autenticación de usuario."
+          ]
+        },
+        {
+          "content": "Conclusión",
+          "items": [
+            "PruebaAndroid es un proyecto base eficaz para demostrar la integración de funcionalidades clave de Android, ideal para el aprendizaje práctico."
+          ]
+        },
+        {
+          "content": "Repositorio",
+          "items": [
+            "https://github.com/vldo66-CL/Android"
+          ]
+        }
+      ]
+    }
+  ]
+}
